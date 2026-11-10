@@ -22,7 +22,7 @@ const apps: App[] = [
   {
     key: 'apple',
     title: 'Apple Карты',
-    color: colors.black,
+    color: colors.text,
     icon: 'logo-apple',
     url: (p, m) => `http://maps.apple.com/?daddr=${p.lat},${p.lng}&dirflg=${m === 'walk' ? 'w' : 'd'}`,
   },
@@ -94,9 +94,9 @@ export default function RouteSheet({ place, onClose }: Props) {
               <Ionicons
                 name={m === 'walk' ? 'walk' : 'car'}
                 size={18}
-                color={mode === m ? colors.black : colors.gray}
+                color={mode === m ? colors.text : colors.muted}
               />
-              <Text style={[styles.segmentText, mode === m && { color: colors.black }]}>
+              <Text style={[styles.segmentText, mode === m && { color: colors.text }]}>
                 {m === 'walk' ? 'Пешком' : 'На машине'}
               </Text>
             </Pressable>
@@ -112,14 +112,14 @@ export default function RouteSheet({ place, onClose }: Props) {
               style={({ pressed }) => [
                 styles.row,
                 i < list.length - 1 && styles.rowBorder,
-                pressed && { backgroundColor: colors.bg },
+                pressed && { backgroundColor: colors.surface },
               ]}
             >
               <View style={[styles.appIcon, { backgroundColor: app.color }]}>
                 <Ionicons name={app.icon} size={18} color={colors.white} />
               </View>
               <Text style={styles.appTitle}>{app.title}</Text>
-              <Ionicons name="chevron-forward" size={18} color={colors.gray} />
+              <Ionicons name="chevron-forward" size={18} color={colors.muted} />
             </Pressable>
           ))}
         </View>
@@ -135,7 +135,7 @@ export default function RouteSheet({ place, onClose }: Props) {
 const styles = StyleSheet.create({
   backdrop: {
     flex: 1,
-    backgroundColor: 'rgba(10, 20, 60, 0.35)',
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
   },
   sheet: {
     width: '100%',
@@ -172,12 +172,12 @@ const styles = StyleSheet.create({
   name: {
     fontFamily: fonts.bold,
     fontSize: 18,
-    color: colors.black,
+    color: colors.text,
   },
   addr: {
     fontFamily: fonts.regular,
     fontSize: 14,
-    color: colors.gray,
+    color: colors.muted,
     marginTop: 2,
   },
   segment: {
@@ -196,23 +196,23 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   segmentActive: {
-    backgroundColor: colors.white,
+    backgroundColor: colors.card,
   },
   segmentText: {
     fontFamily: fonts.semibold,
     fontSize: 14,
-    color: colors.gray,
+    color: colors.muted,
   },
   label: {
     fontFamily: fonts.medium,
     fontSize: 13,
-    color: colors.gray,
+    color: colors.muted,
     marginTop: 20,
     marginBottom: 8,
     marginLeft: 4,
   },
   list: {
-    backgroundColor: colors.white,
+    backgroundColor: colors.card,
     borderRadius: radius.m,
     overflow: 'hidden',
   },
@@ -238,12 +238,12 @@ const styles = StyleSheet.create({
     flex: 1,
     fontFamily: fonts.medium,
     fontSize: 16,
-    color: colors.black,
+    color: colors.text,
   },
   cancel: {
     height: 52,
     borderRadius: radius.pill,
-    backgroundColor: colors.white,
+    backgroundColor: colors.card,
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 12,

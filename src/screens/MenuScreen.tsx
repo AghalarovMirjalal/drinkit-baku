@@ -1,27 +1,38 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Alert, Platform, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
 import ProductImage from '../components/ProductImage';
 import ProductSheet from '../components/ProductSheet';
-import { categories, menu, formatPrice, Category, MenuItem } from '../data/menu';
+import { tabs, subTabs, menu, formatPrice, MenuItem, TabKey } from '../data/menu';
 import { useCart } from '../cart';
 import { colors, fonts, radius } from '../theme';
 
-type Filter = Category | 'all';
+function filterMenu(tab: TabKey, sub: string | null) {
+  if (tab === 'for-you') return menu.filter((m) => m.hit);
+  if (tab === 'winter') return menu.filter((m) => m.winter);
+  return menu.filter((m) => m.category === tab && (!sub || m.sub === sub));
+}
 
 export default function MenuScreen() {
   const insets = useSafeAreaInsets();
   const cart = useCart();
-  const [filter, setFilter] = useState<Filter>('all');
-  const [selected, setSelected] = useState<MenuItem | null>(null);
   const { width } = useWindowDimensions();
+  const [tab, setTab] = useState<TabKey>('coffee');
+  const [sub, setSub] = useState<string | null>('milk coffee');
+  const [selected, setSelected] = useState<MenuItem | null>(null);
 
-  // две колонки: ширина экрана минус отступы 12+12 и промежуток 8
-  const cardWidth = Math.floor((Math.min(width, 430) - 34) / 2);
+  const items = useMemo(() => filterMenu(tab, sub), [tab, sub]);
+  const subs = subTabs[tab];
 
-  const items = filter === 'all' ? menu : menu.filter((m) => m.category === filter);
+  // две колонки: экран минус отступы по краям и промежуток
+  const cardWidth = Math.floor((Math.min(width, 430) - 46) / 2);
+
+  const chooseTab = (key: TabKey) => {
+    setTab(key);
+    setSub(subTabs[key]?.[0] ?? null);
+  };
 
   const checkout = () => {
     const text = `Заказ на ${formatPrice(cart.total)} отправлен. Заберите его с умной полки через 5 минут`;
@@ -35,22 +46,40 @@ export default function MenuScreen() {
 
   return (
     <View style={styles.screen}>
-      <View style={[styles.top, { paddingTop: insets.top + 12 }]}>
-        <Text style={styles.title}>Меню</Text>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filters}>
-          {categories.map((c) => {
-            const active = filter === c.key;
-            return (
-              <Pressable
-                key={c.key}
-                onPress={() => setFilter(c.key)}
-                style={[styles.filter, active && styles.filterActive]}
-              >
-                <Text style={[styles.filterText, active && { color: colors.white }]}>{c.title}</Text>
-              </Pressable>
-            );
-          })}
+      <View style={[styles.top, { paddingTop: insets.top + 16 }]}>
+        {/* мягкое свечение за вкладками */}
+        <View style={styles.glow} pointerEvents="none">
+          {[260, 210, 160, 110, 70].map((d) => (
+            <View
+              key={d}
+              style={{
+                position: 'absolute',
+                width: d,
+                height: d,
+                borderRadius: d / 2,
+                backgroundColor: 'rgba(255,214,160,0.035)',
+              }}
+            />
+          ))}
+        </View>
+
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tabs}>
+          {tabs.map((t) => (
+            <Pressable key={t.key} onPress={() => chooseTab(t.key)} hitSlop={8}>
+              <Text style={[styles.tab, tab === t.key && styles.tabActive]}>{t.title}</Text>
+            </Pressable>
+          ))}
         </ScrollView>
+
+        {subs && (
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.subs}>
+            {subs.map((s) => (
+              <Pressable key={s} onPress={() => setSub(s)} hitSlop={8}>
+                <Text style={[styles.sub, sub === s && styles.subActive]}>{s}</Text>
+              </Pressable>
+            ))}
+          </ScrollView>
+        )}
       </View>
 
       <ScrollView
@@ -58,24 +87,24 @@ export default function MenuScreen() {
         showsVerticalScrollIndicator={false}
       >
         {items.map((item) => (
-          <Pressable key={item.id} style={[styles.card, { width: cardWidth }]} onPress={() => setSelected(item)}>
+          <Pressable
+            key={item.id}
+            style={({ pressed }) => [styles.card, { width: cardWidth }, pressed && { opacity: 0.8 }]}
+            onPress={() => setSelected(item)}
+          >
             <View style={styles.cardImg}>
-              {item.isNew && (
-                <View style={styles.newBadge}>
-                  <Text style={styles.newText}>Новинка</Text>
-                </View>
-              )}
-              <ProductImage item={item} size={50} />
+              <ProductImage item={item} size={cardWidth * 0.48} />
             </View>
             <Text style={styles.name} numberOfLines={2}>
               {item.name}
             </Text>
-            <Text style={styles.volume}>{item.volume ?? '1 шт'}</Text>
-            <View style={styles.priceBtn}>
-              <Text style={styles.priceText}>{formatPrice(item.price)}</Text>
+            <View style={styles.priceRow}>
+              <Text style={styles.price}>{formatPrice(item.price)}</Text>
+              <Ionicons name="chevron-forward" size={20} color={colors.muted} />
             </View>
           </Pressable>
         ))}
+        {items.length === 0 && <Text style={styles.empty}>Скоро здесь что-то появится</Text>}
       </ScrollView>
 
       {cart.count > 0 && (
@@ -100,100 +129,89 @@ const styles = StyleSheet.create({
     backgroundColor: colors.bg,
   },
   top: {
-    backgroundColor: colors.bg,
-    paddingBottom: 12,
+    backgroundColor: colors.surface,
+    paddingBottom: 18,
+    overflow: 'hidden',
   },
-  title: {
-    fontFamily: fonts.bold,
-    fontSize: 32,
-    color: colors.black,
-    letterSpacing: -1,
-    paddingHorizontal: 20,
-    marginBottom: 14,
-  },
-  filters: {
-    paddingHorizontal: 20,
-    gap: 8,
-  },
-  filter: {
-    height: 38,
-    paddingHorizontal: 18,
-    borderRadius: radius.pill,
-    backgroundColor: colors.white,
+  glow: {
+    position: 'absolute',
+    top: -70,
+    left: 50,
+    width: 260,
+    height: 260,
+    alignItems: 'center',
     justifyContent: 'center',
   },
-  filterActive: {
-    backgroundColor: colors.blue,
+  tabs: {
+    paddingHorizontal: 20,
+    gap: 26,
+    alignItems: 'baseline',
   },
-  filterText: {
-    fontFamily: fonts.medium,
-    fontSize: 14,
-    color: colors.black,
+  tab: {
+    fontFamily: fonts.regular,
+    fontSize: 24,
+    color: colors.dim,
+    letterSpacing: -0.3,
+  },
+  tabActive: {
+    color: colors.text,
+  },
+  subs: {
+    paddingHorizontal: 20,
+    gap: 22,
+    marginTop: 18,
+  },
+  sub: {
+    fontFamily: fonts.regular,
+    fontSize: 16,
+    color: colors.dim,
+  },
+  subActive: {
+    color: colors.text,
   },
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    paddingHorizontal: 12,
-    gap: 8,
-    paddingTop: 4,
+    paddingHorizontal: 14,
+    gap: 14,
+    paddingTop: 14,
   },
   card: {
-    backgroundColor: colors.white,
-    borderRadius: radius.m,
-    padding: 8,
-    paddingBottom: 12,
+    backgroundColor: colors.card,
+    borderRadius: radius.xl,
+    paddingHorizontal: 18,
+    paddingTop: 16,
+    paddingBottom: 18,
   },
   cardImg: {
-    overflow: 'hidden',
     height: 150,
-    borderRadius: radius.s + 2,
-    backgroundColor: colors.sky,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 10,
-  },
-  newBadge: {
-    position: 'absolute',
-    top: 8,
-    left: 8,
-    backgroundColor: colors.blue,
-    borderRadius: radius.pill,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    zIndex: 1,
-  },
-  newText: {
-    fontFamily: fonts.medium,
-    fontSize: 11,
-    color: colors.white,
+    marginBottom: 14,
   },
   name: {
-    fontFamily: fonts.medium,
-    fontSize: 15,
-    lineHeight: 19,
-    color: colors.black,
-    paddingHorizontal: 4,
-    minHeight: 38,
-  },
-  volume: {
     fontFamily: fonts.regular,
-    fontSize: 13,
-    color: colors.gray,
-    paddingHorizontal: 4,
-    marginTop: 2,
+    fontSize: 17,
+    lineHeight: 21,
+    color: colors.text,
+    minHeight: 42,
   },
-  priceBtn: {
-    marginTop: 10,
-    height: 36,
-    borderRadius: radius.pill,
-    backgroundColor: colors.sky,
+  priceRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    justifyContent: 'center',
+    marginTop: 12,
   },
-  priceText: {
-    fontFamily: fonts.semibold,
-    fontSize: 14,
-    color: colors.blue,
+  price: {
+    fontFamily: fonts.regular,
+    fontSize: 16,
+    color: colors.text,
+  },
+  empty: {
+    fontFamily: fonts.regular,
+    fontSize: 15,
+    color: colors.muted,
+    padding: 20,
   },
   cartBar: {
     position: 'absolute',
