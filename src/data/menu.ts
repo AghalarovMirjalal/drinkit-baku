@@ -1,10 +1,9 @@
-import { drink } from '../theme';
+import { DrinkColor } from '../theme';
 
-// фото с unsplash.com (бесплатная лицензия)
-const unsplash = (id: string) =>
-  `https://images.unsplash.com/photo-${id}?w=600&h=600&fit=crop&q=80`;
+export type Category = 'coffee' | 'not-coffee' | 'food';
 
-export type Category = 'coffee' | 'cold' | 'tea' | 'food';
+// форма стакана для отрисовки
+export type Shape = 'cup' | 'tall' | 'iced' | 'shot' | 'tea' | 'croissant' | 'toast' | 'cake';
 
 export type MenuItem = {
   id: string;
@@ -13,208 +12,328 @@ export type MenuItem = {
   price: number;
   volume?: string;
   category: Category;
-  color: string;
-  photo?: string;
-  foam?: boolean;
-  cold?: boolean;
+  sub: string;
+  shape: Shape;
+  color?: DrinkColor;
+  art?: boolean; // латте-арт сверху
+  cream?: boolean; // шапка из сливок
   hit?: boolean;
-  isNew?: boolean;
+  winter?: boolean;
 };
 
-export const categories: { key: Category | 'all'; title: string }[] = [
-  { key: 'all', title: 'Всё' },
-  { key: 'coffee', title: 'Кофе' },
-  { key: 'cold', title: 'Холодное' },
-  { key: 'tea', title: 'Не кофе' },
-  { key: 'food', title: 'Еда' },
-];
+export const tabs = [
+  { key: 'for-you', title: 'for you' },
+  { key: 'winter', title: 'winter ✨' },
+  { key: 'coffee', title: 'coffee' },
+  { key: 'not-coffee', title: 'not coffee' },
+  { key: 'food', title: 'food' },
+] as const;
+
+export type TabKey = (typeof tabs)[number]['key'];
+
+export const subTabs: Partial<Record<TabKey, string[]>> = {
+  coffee: ['milk coffee', 'black coffee', 'iced coffee with milk', 'iced black coffee'],
+  'not-coffee': ['matcha', 'tea', 'cocoa', 'lemonades'],
+  food: ['bakery', 'sandwiches', 'desserts'],
+};
 
 export const menu: MenuItem[] = [
+  // milk coffee
   {
     id: 'cappuccino',
-    photo: unsplash('1761783768352-e7f42bfa9988'),
-    name: 'Капучино',
+    name: 'Cappuccino',
     desc: 'Двойной эспрессо и плотная молочная пена',
-    price: 5.2,
+    price: 6.5,
     volume: '300 мл',
     category: 'coffee',
-    color: drink.latte,
-    foam: true,
+    sub: 'milk coffee',
+    shape: 'cup',
+    color: 'latte',
+    art: true,
     hit: true,
+  },
+  {
+    id: 'mocha',
+    name: 'Hot Caffe Mocha',
+    desc: 'Эспрессо, молоко и бельгийский шоколад',
+    price: 8,
+    volume: '350 мл',
+    category: 'coffee',
+    sub: 'milk coffee',
+    shape: 'tall',
+    color: 'mocha',
+    art: true,
   },
   {
     id: 'flat-white',
-    photo: unsplash('1760175445000-0e01e193d1cd'),
-    name: 'Флэт уайт',
+    name: 'Flat White',
     desc: 'Больше кофе, меньше молока',
-    price: 5.5,
+    price: 6,
     volume: '250 мл',
     category: 'coffee',
-    color: drink.coffee,
-    foam: true,
+    sub: 'milk coffee',
+    shape: 'cup',
+    color: 'coffee',
+    art: true,
   },
   {
-    id: 'raf-popcorn',
-    photo: unsplash('1772519597624-cd5284f318c4'),
-    name: 'Раф попкорн',
-    desc: 'Сливочный раф со вкусом карамельного попкорна',
-    price: 6.9,
+    id: 'raf-vanilla',
+    name: 'Raf Vanilla',
+    desc: 'Сливки, эспрессо и ванильный сахар',
+    price: 8,
     volume: '350 мл',
     category: 'coffee',
-    color: drink.latte,
-    foam: true,
+    sub: 'milk coffee',
+    shape: 'tall',
+    color: 'latte',
     hit: true,
+  },
+  {
+    id: 'latte',
+    name: 'Latte',
+    desc: 'Эспрессо и много молока',
+    price: 6.5,
+    volume: '350 мл',
+    category: 'coffee',
+    sub: 'milk coffee',
+    shape: 'tall',
+    color: 'latte',
+    art: true,
   },
   {
     id: 'pistachio-latte',
-    photo: unsplash('1766426910014-63a302fa137e'),
-    name: 'Фисташковый латте',
+    name: 'Pistachio Latte',
     desc: 'Мягкий латте с фисташковой пастой',
-    price: 7.2,
+    price: 8.5,
     volume: '350 мл',
     category: 'coffee',
-    color: drink.matcha,
-    foam: true,
-    isNew: true,
+    sub: 'milk coffee',
+    shape: 'tall',
+    color: 'pistachio',
+    art: true,
+  },
+
+  // зимнее меню
+  {
+    id: 'snow-raf',
+    name: 'Snow Raf',
+    desc: 'Сливочный раф с кокосом и белым шоколадом',
+    price: 9,
+    volume: '350 мл',
+    category: 'coffee',
+    sub: 'milk coffee',
+    shape: 'tall',
+    color: 'latte',
+    winter: true,
+    hit: true,
+  },
+  {
+    id: 'gingerbread-latte',
+    name: 'Gingerbread Latte',
+    desc: 'Латте с имбирным пряником и шапкой из сливок',
+    price: 9,
+    volume: '350 мл',
+    category: 'coffee',
+    sub: 'milk coffee',
+    shape: 'tall',
+    color: 'mocha',
+    cream: true,
+    winter: true,
+  },
+  {
+    id: 'cranberry-tea',
+    name: 'Cranberry Tea',
+    desc: 'Клюква, апельсин и корица',
+    price: 6,
+    volume: '400 мл',
+    category: 'not-coffee',
+    sub: 'tea',
+    shape: 'tea',
+    color: 'pomegranate',
+    winter: true,
+  },
+
+  // black coffee
+  {
+    id: 'espresso',
+    name: 'Espresso',
+    desc: 'Классика на зерне нашей обжарки',
+    price: 4,
+    volume: '40 мл',
+    category: 'coffee',
+    sub: 'black coffee',
+    shape: 'shot',
+    color: 'black',
   },
   {
     id: 'americano',
-    photo: unsplash('1551030173-122aabc4489c'),
-    name: 'Американо',
-    desc: 'Эспрессо и горячая вода. Ничего лишнего',
-    price: 4,
+    name: 'Americano',
+    desc: 'Эспрессо и горячая вода',
+    price: 5,
     volume: '300 мл',
     category: 'coffee',
-    color: drink.espresso,
+    sub: 'black coffee',
+    shape: 'tall',
+    color: 'black',
+  },
+
+  // iced coffee with milk
+  {
+    id: 'iced-latte',
+    name: 'Iced Latte',
+    desc: 'Холодный латте на любом молоке',
+    price: 7,
+    volume: '400 мл',
+    category: 'coffee',
+    sub: 'iced coffee with milk',
+    shape: 'iced',
+    color: 'latte',
+    hit: true,
   },
   {
-    id: 'latte-cheese',
-    photo: unsplash('1517701550927-30cf4ba1dba5'),
-    name: 'Латте айс с сырной пенкой',
-    desc: 'Холодный латте и солёная сырная пенка сверху',
-    price: 7.5,
+    id: 'cheese-foam',
+    name: 'Iced Latte Cheese Foam',
+    desc: 'Холодный латте и солёная сырная пенка',
+    price: 8.5,
     volume: '400 мл',
-    category: 'cold',
-    color: drink.latte,
-    foam: true,
-    cold: true,
-    hit: true,
-    isNew: true,
+    category: 'coffee',
+    sub: 'iced coffee with milk',
+    shape: 'iced',
+    color: 'coffee',
+    cream: true,
   },
+
+  // iced black coffee
   {
     id: 'bumble',
-    photo: unsplash('1629022194335-b2eca031e320'),
-    name: 'Бамбл',
+    name: 'Bumble',
     desc: 'Апельсиновый сок, карамель и эспрессо со льдом',
-    price: 6.5,
+    price: 8,
     volume: '400 мл',
-    category: 'cold',
-    color: drink.orange,
-    cold: true,
+    category: 'coffee',
+    sub: 'iced black coffee',
+    shape: 'iced',
+    color: 'orange',
+    hit: true,
   },
   {
     id: 'espresso-tonic',
-    photo: unsplash('1753700281029-b3d15df20ec4'),
-    name: 'Эспрессо-тоник',
+    name: 'Espresso Tonic',
     desc: 'Тоник, лёд и шот эспрессо',
-    price: 6.2,
+    price: 7.5,
     volume: '400 мл',
-    category: 'cold',
-    color: drink.tonic,
-    cold: true,
+    category: 'coffee',
+    sub: 'iced black coffee',
+    shape: 'iced',
+    color: 'tonic',
+  },
+
+  // not coffee
+  {
+    id: 'matcha-latte',
+    name: 'Matcha Latte',
+    desc: 'Японский зелёный чай с молоком',
+    price: 7.5,
+    volume: '350 мл',
+    category: 'not-coffee',
+    sub: 'matcha',
+    shape: 'tall',
+    color: 'matcha',
+    art: true,
   },
   {
     id: 'berry-matcha',
-    photo: unsplash('1749104028327-a33087ea4f47'),
-    name: 'Ягодная матча',
+    name: 'Iced Berry Matcha',
     desc: 'Матча на молоке и ягодное пюре со льдом',
-    price: 7.4,
+    price: 8.5,
     volume: '400 мл',
-    category: 'cold',
-    color: drink.berry,
-    foam: true,
-    cold: true,
+    category: 'not-coffee',
+    sub: 'matcha',
+    shape: 'iced',
+    color: 'berry',
     hit: true,
   },
   {
-    id: 'pomegranate-lemonade',
-    photo: unsplash('1603028769268-94e389e60414'),
-    name: 'Гранатовый лимонад',
-    desc: 'Азербайджанский гранат, лайм и газировка',
-    price: 5.5,
-    volume: '400 мл',
-    category: 'cold',
-    color: drink.pomegranate,
-    cold: true,
-    isNew: true,
-  },
-  {
-    id: 'matcha',
-    photo: unsplash('1515823064-d6e0c04616a7'),
-    name: 'Матча латте',
-    desc: 'Японский зелёный чай с молоком',
-    price: 6.8,
-    volume: '350 мл',
-    category: 'tea',
-    color: drink.matcha,
-    foam: true,
-  },
-  {
     id: 'thyme-tea',
-    photo: unsplash('1558160074-4d7d8bdf4256'),
-    name: 'Чай с чабрецом',
+    name: 'Thyme Tea',
     desc: 'Чёрный чай, чабрец и немного мёда',
-    price: 4,
+    price: 4.5,
     volume: '400 мл',
-    category: 'tea',
-    color: drink.tea,
+    category: 'not-coffee',
+    sub: 'tea',
+    shape: 'tea',
+    color: 'tea',
   },
   {
     id: 'cocoa',
-    photo: unsplash('1637572815755-c4b80092dce1'),
-    name: 'Какао',
+    name: 'Cocoa',
     desc: 'Густое какао на молоке',
-    price: 5.8,
+    price: 6.5,
     volume: '350 мл',
-    category: 'tea',
-    color: drink.cocoa,
-    foam: true,
+    category: 'not-coffee',
+    sub: 'cocoa',
+    shape: 'cup',
+    color: 'cocoa',
+    cream: true,
   },
   {
+    id: 'pomegranate-lemonade',
+    name: 'Pomegranate Lemonade',
+    desc: 'Азербайджанский гранат, лайм и газировка',
+    price: 6,
+    volume: '400 мл',
+    category: 'not-coffee',
+    sub: 'lemonades',
+    shape: 'iced',
+    color: 'pomegranate',
+  },
+
+  // food
+  {
     id: 'croissant',
-    photo: unsplash('1599940778173-e276d4acb2bb'),
-    name: 'Круассан с сыром',
+    name: 'Cheese Croissant',
     desc: 'Тёплый, хрустящий, с сыром внутри',
     price: 4.5,
     category: 'food',
-    color: '#E8C48A',
+    sub: 'bakery',
+    shape: 'croissant',
   },
   {
     id: 'toast',
-    photo: unsplash('1528736235302-52922df5c122'),
-    name: 'Тост с индейкой',
+    name: 'Turkey Toast',
     desc: 'Хлеб на закваске, индейка, песто',
-    price: 7.5,
+    price: 8,
     category: 'food',
-    color: '#D9A86C',
+    sub: 'sandwiches',
+    shape: 'toast',
   },
   {
     id: 'cheesecake',
-    photo: unsplash('1774988867972-98caecc776d8'),
-    name: 'Чизкейк',
+    name: 'Cheesecake',
     desc: 'Классический нью-йорк',
-    price: 6,
+    price: 6.5,
     category: 'food',
-    color: '#F3E3C3',
+    sub: 'desserts',
+    shape: 'cake',
   },
 ];
 
 export const sizes = [
   { title: 'S', extra: 0 },
-  { title: 'M', extra: 0.8 },
-  { title: 'L', extra: 1.5 },
+  { title: 'M', extra: 1 },
+  { title: 'L', extra: 2 },
 ];
 
 export const milks = ['Обычное', 'Овсяное', 'Кокосовое', 'Безлактозное'];
 
-export const formatPrice = (p: number) => `${p.toFixed(2)} ₼`;
+export const isDrink = (item: MenuItem) => item.category !== 'food';
+
+const noMilk = ['black', 'tea', 'orange', 'tonic', 'pomegranate'];
+export const hasMilk = (item: MenuItem) =>
+  isDrink(item) && item.shape !== 'tea' && !noMilk.includes(item.color ?? '');
+
+// 6,50 ₼ или 8 ₼ — как в приложении
+export const formatPrice = (p: number) => {
+  const s = Number.isInteger(p) ? String(p) : p.toFixed(2).replace('.', ',');
+  return `${s} ₼`;
+};
