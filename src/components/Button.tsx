@@ -18,7 +18,7 @@ export default function Button({ title, onPress, variant = 'blue', small, style 
         small && styles.small,
         variant === 'blue' && { backgroundColor: colors.blue },
         variant === 'white' && { backgroundColor: colors.white },
-        variant === 'light' && { backgroundColor: colors.sky },
+        variant === 'light' && { backgroundColor: colors.surface },
         pressed && { opacity: 0.85, transform: [{ scale: 0.98 }] },
         style,
       ]}
@@ -27,7 +27,8 @@ export default function Button({ title, onPress, variant = 'blue', small, style 
         style={[
           styles.text,
           small && { fontSize: 14 },
-          variant !== 'blue' && { color: colors.blue },
+          variant === 'white' && { color: colors.black },
+          variant === 'light' && { color: colors.text },
         ]}
       >
         {title}

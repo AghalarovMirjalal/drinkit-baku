@@ -55,7 +55,7 @@ export default function App() {
         <View style={styles.phone}>
           <CartProvider>
             <NavigationContainer linking={linking} documentTitle={{ formatter: () => 'Drinkit Baku' }}>
-              <StatusBar style="dark" />
+              <StatusBar style="light" />
               <Tab.Navigator
                 tabBar={(props) => <TabBar {...props} />}
                 screenOptions={{ headerShown: false }}
@@ -75,7 +75,7 @@ export default function App() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: Platform.OS === 'web' ? '#DCE3F0' : colors.bg,
+    backgroundColor: Platform.OS === 'web' ? '#07080B' : colors.bg,
   },
   phone: {
     flex: 1,

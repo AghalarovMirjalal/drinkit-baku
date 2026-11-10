@@ -31,7 +31,7 @@ export default function TabBar({ state, navigation }: BottomTabBarProps) {
               <Ionicons
                 name={focused ? tab.icon : (`${tab.icon}-outline` as any)}
                 size={20}
-                color={focused ? colors.white : colors.gray}
+                color={focused ? colors.white : colors.muted}
               />
               {focused && <Text style={styles.label}>{tab.title}</Text>}
             </Pressable>
@@ -52,12 +52,12 @@ const styles = StyleSheet.create({
   },
   bar: {
     flexDirection: 'row',
-    backgroundColor: colors.white,
+    backgroundColor: colors.surface,
     borderRadius: radius.pill,
     padding: 6,
     justifyContent: 'space-between',
-    shadowColor: '#1B2A80',
-    shadowOpacity: 0.12,
+    shadowColor: '#000',
+    shadowOpacity: 0.4,
     shadowRadius: 20,
     shadowOffset: { width: 0, height: 6 },
     elevation: 8,

@@ -31,12 +31,12 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: fonts.bold,
     fontSize: 24,
-    color: colors.black,
+    color: colors.text,
     letterSpacing: -0.5,
   },
   action: {
     fontFamily: fonts.medium,
     fontSize: 15,
-    color: colors.blue,
+    color: colors.blueLight,
   },
 });
