@@ -1,35 +1,33 @@
-import { Pressable, StyleSheet, Text } from 'react-native';
+import { Pressable, StyleSheet, Text, ViewStyle, StyleProp } from 'react-native';
 import { colors, fonts, radius } from '../theme';
 
 type Props = {
   title: string;
   onPress?: () => void;
-  variant?: 'lime' | 'white' | 'dark' | 'outline';
+  variant?: 'blue' | 'white' | 'light';
   small?: boolean;
+  style?: StyleProp<ViewStyle>;
 };
 
-export default function Button({ title, onPress, variant = 'lime', small }: Props) {
-  const dark = variant === 'dark';
-  const outline = variant === 'outline';
-
+export default function Button({ title, onPress, variant = 'blue', small, style }: Props) {
   return (
     <Pressable
       onPress={onPress}
-      style={({ pressed, hovered }: any) => [
+      style={({ pressed }) => [
         styles.btn,
         small && styles.small,
-        variant === 'lime' && { backgroundColor: colors.lime },
+        variant === 'blue' && { backgroundColor: colors.blue },
         variant === 'white' && { backgroundColor: colors.white },
-        dark && { backgroundColor: colors.black },
-        outline && styles.outline,
-        (hovered || pressed) && { transform: [{ scale: 0.97 }], opacity: 0.9 },
+        variant === 'light' && { backgroundColor: colors.sky },
+        pressed && { opacity: 0.85, transform: [{ scale: 0.98 }] },
+        style,
       ]}
     >
       <Text
         style={[
           styles.text,
-          small && { fontSize: 13 },
-          (dark || outline) && { color: colors.white },
+          small && { fontSize: 14 },
+          variant !== 'blue' && { color: colors.blue },
         ]}
       >
         {title}
@@ -40,25 +38,19 @@ export default function Button({ title, onPress, variant = 'lime', small }: Prop
 
 const styles = StyleSheet.create({
   btn: {
-    paddingVertical: 16,
-    paddingHorizontal: 28,
+    height: 52,
+    paddingHorizontal: 24,
     borderRadius: radius.pill,
     alignItems: 'center',
     justifyContent: 'center',
-    alignSelf: 'flex-start',
   },
   small: {
-    paddingVertical: 10,
-    paddingHorizontal: 18,
-  },
-  outline: {
-    borderWidth: 1.5,
-    borderColor: colors.white,
-    backgroundColor: 'transparent',
+    height: 38,
+    paddingHorizontal: 16,
   },
   text: {
-    fontFamily: fonts.textBold,
-    fontSize: 15,
-    color: colors.black,
+    fontFamily: fonts.semibold,
+    fontSize: 16,
+    color: colors.white,
   },
 });
