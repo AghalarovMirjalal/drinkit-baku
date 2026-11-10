@@ -54,14 +54,14 @@ export default function PlacesScreen() {
                   {p.address}
                 </Text>
               </View>
-              <View style={[styles.status, { backgroundColor: open ? '#E3F6EC' : colors.pink }]}>
-                <View style={[styles.statusDot, { backgroundColor: open ? colors.green : '#E0524A' }]} />
+              <View style={[styles.status, { backgroundColor: open ? 'rgba(60,203,127,0.15)' : 'rgba(255,90,95,0.15)' }]}>
+                <View style={[styles.statusDot, { backgroundColor: open ? colors.green : colors.red }]} />
                 <Text style={styles.statusText}>{open ? 'Открыто' : 'Закрыто'}</Text>
               </View>
             </View>
 
             <View style={styles.row}>
-              <Ionicons name="time-outline" size={16} color={colors.gray} />
+              <Ionicons name="time-outline" size={16} color={colors.muted} />
               <Text style={styles.rowText}>
                 Ежедневно {p.open}–{p.close}
               </Text>
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: fonts.bold,
     fontSize: 32,
-    color: colors.black,
+    color: colors.text,
     letterSpacing: -1,
     paddingHorizontal: 20,
   },
@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
     fontFamily: fonts.regular,
     fontSize: 15,
     lineHeight: 20,
-    color: colors.gray,
+    color: colors.muted,
     paddingHorizontal: 20,
     marginTop: 6,
     marginBottom: 16,
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
   card: {
     marginHorizontal: 12,
     marginBottom: 8,
-    backgroundColor: colors.white,
+    backgroundColor: colors.surface,
     borderRadius: radius.l,
     padding: 18,
     borderWidth: 2,
@@ -135,13 +135,13 @@ const styles = StyleSheet.create({
   name: {
     fontFamily: fonts.semibold,
     fontSize: 18,
-    color: colors.black,
+    color: colors.text,
   },
   addr: {
     fontFamily: fonts.regular,
     fontSize: 14,
     lineHeight: 18,
-    color: colors.gray,
+    color: colors.muted,
     marginTop: 4,
   },
   status: {
@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
   statusText: {
     fontFamily: fonts.medium,
     fontSize: 12,
-    color: colors.black,
+    color: colors.text,
   },
   row: {
     flexDirection: 'row',
@@ -188,19 +188,19 @@ const styles = StyleSheet.create({
   featureText: {
     fontFamily: fonts.medium,
     fontSize: 12,
-    color: colors.blue,
+    color: colors.blueLight,
   },
   soon: {
     marginHorizontal: 12,
     marginTop: 8,
-    backgroundColor: colors.sky,
+    backgroundColor: colors.surface,
     borderRadius: radius.l,
     padding: 20,
   },
   soonTitle: {
     fontFamily: fonts.semibold,
     fontSize: 18,
-    color: colors.blue,
+    color: colors.blueLight,
   },
   soonText: {
     fontFamily: fonts.regular,

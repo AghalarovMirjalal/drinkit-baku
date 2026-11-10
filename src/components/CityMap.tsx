@@ -31,7 +31,7 @@ export default function CityMap({ active, onSelect }: Props) {
         style={StyleSheet.absoluteFill}
         initialRegion={BAKU_REGION}
         mapType={Platform.OS === 'ios' ? 'mutedStandard' : 'standard'}
-        userInterfaceStyle="light"
+        userInterfaceStyle="dark"
         showsUserLocation
         showsPointsOfInterests={false}
         showsCompass={false}
@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.xl,
     overflow: 'hidden',
     marginBottom: 12,
-    backgroundColor: colors.sky,
+    backgroundColor: colors.surface,
   },
   pin: {
     width: 34,
