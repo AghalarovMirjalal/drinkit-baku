@@ -1,9 +1,11 @@
 import { useState } from 'react';
-import { Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
 import Button from '../components/Button';
+import CityMap from '../components/CityMap';
+import RouteSheet from '../components/RouteSheet';
 import { places, Place } from '../data/places';
 import { colors, fonts, radius } from '../theme';
 
@@ -17,51 +19,10 @@ function isOpen(p: Place) {
   return minutes >= toMin(p.open) && minutes < toMin(p.close);
 }
 
-function openMap(p: Place) {
-  const q = encodeURIComponent(`${p.name}, ${p.address}, Baku`);
-  Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${q}`);
-}
-
-// упрощённая схема города в стиле чертежа
-function MapScheme({ active, onSelect }: { active: string; onSelect: (id: string) => void }) {
-  return (
-    <View style={styles.map}>
-      {Array.from({ length: 9 }).map((_, i) => (
-        <View key={`v${i}`} style={[styles.gridV, { left: `${(i + 1) * 10}%` }]} />
-      ))}
-      {Array.from({ length: 6 }).map((_, i) => (
-        <View key={`h${i}`} style={[styles.gridH, { top: `${(i + 1) * 14}%` }]} />
-      ))}
-
-      {/* улицы */}
-      <View style={[styles.road, { top: '30%', left: '-10%', width: '120%', transform: [{ rotate: '-8deg' }] }]} />
-      <View style={[styles.road, { top: '55%', left: '-10%', width: '120%', transform: [{ rotate: '14deg' }] }]} />
-      <View style={[styles.road, { top: '50%', left: '20%', width: '90%', transform: [{ rotate: '90deg' }] }]} />
-
-      {/* море */}
-      <View style={styles.sea}>
-        <Text style={styles.seaText}>Каспийское море</Text>
-      </View>
-
-      {places.map((p) => {
-        const on = p.id === active;
-        return (
-          <Pressable
-            key={p.id}
-            onPress={() => onSelect(p.id)}
-            style={[styles.pin, { left: `${p.x}%`, top: `${p.y}%` }, on && styles.pinActive]}
-          >
-            <Ionicons name="cafe" size={on ? 18 : 14} color={on ? colors.blue : colors.white} />
-          </Pressable>
-        );
-      })}
-    </View>
-  );
-}
-
 export default function PlacesScreen() {
   const insets = useSafeAreaInsets();
   const [active, setActive] = useState(places[0].id);
+  const [route, setRoute] = useState<Place | null>(null);
 
   return (
     <ScrollView
@@ -74,7 +35,7 @@ export default function PlacesScreen() {
         {places.length} кофейни в Баку. Закажите заранее и заберите в любой из них
       </Text>
 
-      <MapScheme active={active} onSelect={setActive} />
+      <CityMap active={active} onSelect={setActive} />
 
       {places.map((p) => {
         const open = isOpen(p);
@@ -115,7 +76,7 @@ export default function PlacesScreen() {
             </View>
 
             {on && (
-              <Button title="Построить маршрут" small onPress={() => openMap(p)} style={{ marginTop: 14 }} />
+              <Button title="Построить маршрут" small onPress={() => setRoute(p)} style={{ marginTop: 14 }} />
             )}
           </Pressable>
         );
@@ -127,6 +88,8 @@ export default function PlacesScreen() {
           Мы открываем новые кофейни в Баку. Следите за новостями в приложении
         </Text>
       </View>
+
+      <RouteSheet place={route} onClose={() => setRoute(null)} />
     </ScrollView>
   );
 }
@@ -151,74 +114,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     marginTop: 6,
     marginBottom: 16,
-  },
-  map: {
-    height: 260,
-    marginHorizontal: 12,
-    borderRadius: radius.xl,
-    backgroundColor: colors.blue,
-    overflow: 'hidden',
-    marginBottom: 12,
-  },
-  gridV: {
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    width: 1,
-    backgroundColor: 'rgba(255,255,255,0.12)',
-  },
-  gridH: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    height: 1,
-    backgroundColor: 'rgba(255,255,255,0.12)',
-  },
-  road: {
-    position: 'absolute',
-    height: 6,
-    borderTopWidth: 1.5,
-    borderBottomWidth: 1.5,
-    borderColor: 'rgba(255,255,255,0.7)',
-  },
-  sea: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    height: '22%',
-    borderTopWidth: 1.5,
-    borderColor: colors.white,
-    borderStyle: 'dashed',
-    backgroundColor: colors.blueDark,
-    justifyContent: 'center',
-    paddingHorizontal: 16,
-  },
-  seaText: {
-    fontFamily: fonts.medium,
-    fontSize: 12,
-    color: 'rgba(255,255,255,0.7)',
-  },
-  pin: {
-    position: 'absolute',
-    width: 30,
-    height: 30,
-    marginLeft: -15,
-    marginTop: -15,
-    borderRadius: 15,
-    borderWidth: 2,
-    borderColor: colors.white,
-    backgroundColor: colors.blue,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  pinActive: {
-    width: 42,
-    height: 42,
-    marginLeft: -21,
-    marginTop: -21,
-    borderRadius: 21,
-    backgroundColor: colors.white,
   },
   card: {
     marginHorizontal: 12,
