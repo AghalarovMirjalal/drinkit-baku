@@ -1,20 +1,27 @@
-import { ActivityIndicator, View } from 'react-native';
+import { ActivityIndicator, Platform, StyleSheet, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer, LinkingOptions } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { useFonts, Unbounded_600SemiBold, Unbounded_800ExtraBold } from '@expo-google-fonts/unbounded';
-import { Manrope_500Medium, Manrope_700Bold } from '@expo-google-fonts/manrope';
+import {
+  useFonts,
+  Onest_400Regular,
+  Onest_500Medium,
+  Onest_600SemiBold,
+  Onest_700Bold,
+} from '@expo-google-fonts/onest';
 
-import { RootStackParamList } from './src/navigation';
+import { TabParamList } from './src/navigation';
 import { colors } from './src/theme';
+import TabBar from './src/components/TabBar';
+import { CartProvider } from './src/cart';
 import HomeScreen from './src/screens/HomeScreen';
 import MenuScreen from './src/screens/MenuScreen';
 import PlacesScreen from './src/screens/PlacesScreen';
 
-const Stack = createNativeStackNavigator<RootStackParamList>();
+const Tab = createBottomTabNavigator<TabParamList>();
 
-const linking: LinkingOptions<RootStackParamList> = {
+const linking: LinkingOptions<TabParamList> = {
   prefixes: [],
   config: {
     screens: {
@@ -27,30 +34,55 @@ const linking: LinkingOptions<RootStackParamList> = {
 
 export default function App() {
   const [loaded] = useFonts({
-    Unbounded_600SemiBold,
-    Unbounded_800ExtraBold,
-    Manrope_500Medium,
-    Manrope_700Bold,
+    Onest_400Regular,
+    Onest_500Medium,
+    Onest_600SemiBold,
+    Onest_700Bold,
   });
 
   if (!loaded) {
     return (
-      <View style={{ flex: 1, backgroundColor: colors.black, justifyContent: 'center' }}>
-        <ActivityIndicator color={colors.lime} />
+      <View style={[styles.root, { justifyContent: 'center' }]}>
+        <ActivityIndicator color={colors.blue} />
       </View>
     );
   }
 
   return (
     <SafeAreaProvider>
-      <NavigationContainer linking={linking} documentTitle={{ formatter: () => 'Drinkit Baku' }}>
-        <StatusBar style="light" />
-        <Stack.Navigator screenOptions={{ headerShown: false, animation: 'fade' }}>
-          <Stack.Screen name="Home" component={HomeScreen} />
-          <Stack.Screen name="Menu" component={MenuScreen} />
-          <Stack.Screen name="Places" component={PlacesScreen} />
-        </Stack.Navigator>
-      </NavigationContainer>
+      <View style={styles.root}>
+        {/* в браузере показываем приложение в ширину телефона */}
+        <View style={styles.phone}>
+          <CartProvider>
+            <NavigationContainer linking={linking} documentTitle={{ formatter: () => 'Drinkit Baku' }}>
+              <StatusBar style="dark" />
+              <Tab.Navigator
+                tabBar={(props) => <TabBar {...props} />}
+                screenOptions={{ headerShown: false }}
+              >
+                <Tab.Screen name="Home" component={HomeScreen} />
+                <Tab.Screen name="Menu" component={MenuScreen} />
+                <Tab.Screen name="Places" component={PlacesScreen} />
+              </Tab.Navigator>
+            </NavigationContainer>
+          </CartProvider>
+        </View>
+      </View>
     </SafeAreaProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+    backgroundColor: Platform.OS === 'web' ? '#DCE3F0' : colors.bg,
+  },
+  phone: {
+    flex: 1,
+    width: '100%',
+    maxWidth: Platform.OS === 'web' ? 430 : undefined,
+    alignSelf: 'center',
+    backgroundColor: colors.bg,
+    overflow: 'hidden',
+  },
+});

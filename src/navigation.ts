@@ -1,7 +1,7 @@
-export type RootStackParamList = {
+export type TabParamList = {
   Home: undefined;
-  Menu: undefined;
+  Menu: { category?: string } | undefined;
   Places: undefined;
 };
 
-export type PageName = keyof RootStackParamList;
+export type TabName = keyof TabParamList;
