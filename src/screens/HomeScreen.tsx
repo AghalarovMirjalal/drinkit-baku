@@ -273,6 +273,7 @@ const styles = StyleSheet.create({
     width: 150,
   },
   productImg: {
+    overflow: 'hidden',
     height: 170,
     borderRadius: radius.l,
     backgroundColor: colors.sky,

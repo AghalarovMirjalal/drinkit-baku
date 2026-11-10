@@ -141,6 +141,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   image: {
+    overflow: 'hidden',
     height: 200,
     borderRadius: radius.l,
     backgroundColor: colors.sky,
