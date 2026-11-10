@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Alert, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Platform, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -16,6 +16,10 @@ export default function MenuScreen() {
   const cart = useCart();
   const [filter, setFilter] = useState<Filter>('all');
   const [selected, setSelected] = useState<MenuItem | null>(null);
+  const { width } = useWindowDimensions();
+
+  // две колонки: ширина экрана минус отступы 12+12 и промежуток 8
+  const cardWidth = Math.floor((Math.min(width, 430) - 34) / 2);
 
   const items = filter === 'all' ? menu : menu.filter((m) => m.category === filter);
 
@@ -54,7 +58,7 @@ export default function MenuScreen() {
         showsVerticalScrollIndicator={false}
       >
         {items.map((item) => (
-          <Pressable key={item.id} style={styles.card} onPress={() => setSelected(item)}>
+          <Pressable key={item.id} style={[styles.card, { width: cardWidth }]} onPress={() => setSelected(item)}>
             <View style={styles.cardImg}>
               {item.isNew && (
                 <View style={styles.newBadge}>
@@ -134,13 +138,13 @@ const styles = StyleSheet.create({
     paddingTop: 4,
   },
   card: {
-    width: '48.8%',
     backgroundColor: colors.white,
     borderRadius: radius.m,
     padding: 8,
     paddingBottom: 12,
   },
   cardImg: {
+    overflow: 'hidden',
     height: 150,
     borderRadius: radius.s + 2,
     backgroundColor: colors.sky,
