@@ -1,28 +1,43 @@
 export const colors = {
-  black: '#0B0B0B',
+  blue: '#334CDB',
+  blueDark: '#182DA8',
+  blueLight: '#5E74F6',
+  sky: '#E7F1FF',
+  bg: '#F2F6FC',
   white: '#FFFFFF',
-  milk: '#F4F1EC',
-  gray: '#8A8A8A',
-  line: '#2A2A2A',
-  lime: '#D4FF3A',
-  pink: '#FF8AD4',
-  lilac: '#B9A6FF',
-  orange: '#FF6A2B',
-  sky: '#8FD8FF',
+  black: '#000000',
+  text: '#222222',
+  gray: '#8A93A6',
+  line: '#DDE3EE',
+  pink: '#FFDEDE',
+  green: '#2FB36B',
+};
+
+// цвета самих напитков в стаканах
+export const drink = {
+  coffee: '#B07A4F',
+  latte: '#D9B48F',
+  matcha: '#9CC46B',
+  berry: '#8E5BD9',
+  orange: '#F29A3D',
+  tonic: '#C9DDF7',
+  cocoa: '#7A4B35',
+  pomegranate: '#D9405A',
+  tea: '#C77B32',
+  espresso: '#4A2C1D',
 };
 
 export const fonts = {
-  title: 'Unbounded_800ExtraBold',
-  titleMedium: 'Unbounded_600SemiBold',
-  text: 'Manrope_500Medium',
-  textBold: 'Manrope_700Bold',
+  regular: 'Onest_400Regular',
+  medium: 'Onest_500Medium',
+  semibold: 'Onest_600SemiBold',
+  bold: 'Onest_700Bold',
 };
 
 export const radius = {
-  s: 14,
+  s: 16,
   m: 24,
-  l: 36,
+  l: 32,
+  xl: 40,
   pill: 999,
 };
-
-export const MAX_WIDTH = 1200;
