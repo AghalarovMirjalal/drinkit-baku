@@ -3,7 +3,7 @@ import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
-import { MenuItem, sizes, milks, formatPrice } from '../data/menu';
+import { MenuItem, sizes, milks, formatPrice, isDrink, hasMilk } from '../data/menu';
 import { useCart } from '../cart';
 import { colors, fonts, radius } from '../theme';
 import Button from './Button';
@@ -27,16 +27,16 @@ export default function ProductSheet({ item, onClose }: Props) {
 
   if (!item) return null;
 
-  const isDrink = item.category !== 'food';
-  const hasMilk = isDrink && !!item.foam;
-  const price = item.price + (isDrink ? sizes[size].extra : 0) + (hasMilk && milk > 0 ? 0.5 : 0);
+  const drinkItem = isDrink(item);
+  const milkItem = hasMilk(item);
+  const price = item.price + (drinkItem ? sizes[size].extra : 0) + (milkItem && milk > 0 ? 0.5 : 0);
 
   const onAdd = () => {
     add({
       id: item.id,
       name: item.name,
-      size: isDrink ? sizes[size].title : '',
-      milk: hasMilk ? milks[milk] : '',
+      size: drinkItem ? sizes[size].title : '',
+      milk: milkItem ? milks[milk] : '',
       price,
     });
     onClose();
@@ -50,11 +50,11 @@ export default function ProductSheet({ item, onClose }: Props) {
         <View style={styles.handle} />
 
         <Pressable style={styles.close} onPress={onClose} hitSlop={10}>
-          <Ionicons name="close" size={20} color={colors.black} />
+          <Ionicons name="close" size={20} color={colors.text} />
         </Pressable>
 
         <View style={styles.image}>
-          <ProductImage item={item} size={80} />
+          <ProductImage item={item} size={110} />
         </View>
 
         <Text style={styles.name}>{item.name}</Text>
@@ -63,7 +63,7 @@ export default function ProductSheet({ item, onClose }: Props) {
           {item.volume ? ` · ${item.volume}` : ''}
         </Text>
 
-        {isDrink && (
+        {drinkItem && (
           <>
             <Text style={styles.label}>Размер</Text>
             <View style={styles.segment}>
@@ -73,16 +73,14 @@ export default function ProductSheet({ item, onClose }: Props) {
                   onPress={() => setSize(i)}
                   style={[styles.segmentItem, size === i && styles.segmentActive]}
                 >
-                  <Text style={[styles.segmentText, size === i && { color: colors.black }]}>
-                    {s.title}
-                  </Text>
+                  <Text style={[styles.segmentText, size === i && { color: colors.text }]}>{s.title}</Text>
                 </Pressable>
               ))}
             </View>
           </>
         )}
 
-        {hasMilk && (
+        {milkItem && (
           <>
             <Text style={styles.label}>Молоко</Text>
             <View style={styles.chips}>
@@ -99,7 +97,7 @@ export default function ProductSheet({ item, onClose }: Props) {
           </>
         )}
 
-        <Button title={`В корзину · ${formatPrice(price)}`} onPress={onAdd} style={{ marginTop: 24 }} />
+        <Button title={`Добавить · ${formatPrice(price)}`} onPress={onAdd} style={{ marginTop: 24 }} />
       </View>
     </Modal>
   );
@@ -108,13 +106,13 @@ export default function ProductSheet({ item, onClose }: Props) {
 const styles = StyleSheet.create({
   backdrop: {
     flex: 1,
-    backgroundColor: 'rgba(10, 20, 60, 0.35)',
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
   },
   sheet: {
     width: '100%',
     maxWidth: 430,
     alignSelf: 'center',
-    backgroundColor: colors.white,
+    backgroundColor: colors.card,
     borderTopLeftRadius: radius.xl,
     borderTopRightRadius: radius.xl,
     paddingHorizontal: 20,
@@ -135,43 +133,40 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: colors.bg,
+    backgroundColor: colors.surface,
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 1,
   },
   image: {
-    overflow: 'hidden',
-    height: 200,
-    borderRadius: radius.l,
-    backgroundColor: colors.sky,
+    height: 230,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 16,
+    marginBottom: 8,
   },
   name: {
-    fontFamily: fonts.bold,
-    fontSize: 24,
-    color: colors.black,
+    fontFamily: fonts.medium,
+    fontSize: 26,
+    color: colors.text,
     letterSpacing: -0.5,
   },
   desc: {
     fontFamily: fonts.regular,
     fontSize: 15,
     lineHeight: 20,
-    color: colors.gray,
+    color: colors.muted,
     marginTop: 6,
   },
   label: {
-    fontFamily: fonts.semibold,
+    fontFamily: fonts.medium,
     fontSize: 15,
-    color: colors.black,
+    color: colors.text,
     marginTop: 20,
     marginBottom: 10,
   },
   segment: {
     flexDirection: 'row',
-    backgroundColor: colors.bg,
+    backgroundColor: colors.surface,
     borderRadius: radius.pill,
     padding: 4,
   },
@@ -183,17 +178,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   segmentActive: {
-    backgroundColor: colors.white,
-    shadowColor: '#000',
-    shadowOpacity: 0.08,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
+    backgroundColor: colors.surface2,
   },
   segmentText: {
     fontFamily: fonts.semibold,
     fontSize: 15,
-    color: colors.gray,
+    color: colors.muted,
   },
   chips: {
     flexDirection: 'row',
@@ -204,7 +194,7 @@ const styles = StyleSheet.create({
     height: 38,
     paddingHorizontal: 16,
     borderRadius: radius.pill,
-    backgroundColor: colors.bg,
+    backgroundColor: colors.surface,
     justifyContent: 'center',
   },
   chipActive: {
@@ -213,6 +203,6 @@ const styles = StyleSheet.create({
   chipText: {
     fontFamily: fonts.medium,
     fontSize: 14,
-    color: colors.black,
+    color: colors.text,
   },
 });
