@@ -1,4 +1,4 @@
-import { colors } from '../theme';
+import { drink } from '../theme';
 
 export type Category = 'coffee' | 'cold' | 'tea' | 'food';
 
@@ -10,6 +10,8 @@ export type MenuItem = {
   volume?: string;
   category: Category;
   color: string;
+  foam?: boolean;
+  cold?: boolean;
   hit?: boolean;
   isNew?: boolean;
 };
@@ -18,7 +20,7 @@ export const categories: { key: Category | 'all'; title: string }[] = [
   { key: 'all', title: 'Всё' },
   { key: 'coffee', title: 'Кофе' },
   { key: 'cold', title: 'Холодное' },
-  { key: 'tea', title: 'Чай и не кофе' },
+  { key: 'tea', title: 'Не кофе' },
   { key: 'food', title: 'Еда' },
 ];
 
@@ -30,17 +32,19 @@ export const menu: MenuItem[] = [
     price: 5.2,
     volume: '300 мл',
     category: 'coffee',
-    color: colors.milk,
+    color: drink.latte,
+    foam: true,
     hit: true,
   },
   {
     id: 'flat-white',
     name: 'Флэт уайт',
-    desc: 'Больше кофе, меньше молока. Для тех, кто проснулся не до конца',
+    desc: 'Больше кофе, меньше молока',
     price: 5.5,
     volume: '250 мл',
     category: 'coffee',
-    color: colors.orange,
+    color: drink.coffee,
+    foam: true,
   },
   {
     id: 'raf-popcorn',
@@ -49,7 +53,8 @@ export const menu: MenuItem[] = [
     price: 6.9,
     volume: '350 мл',
     category: 'coffee',
-    color: colors.lime,
+    color: drink.latte,
+    foam: true,
     hit: true,
   },
   {
@@ -59,17 +64,31 @@ export const menu: MenuItem[] = [
     price: 7.2,
     volume: '350 мл',
     category: 'coffee',
-    color: colors.lime,
+    color: drink.matcha,
+    foam: true,
     isNew: true,
   },
   {
-    id: 'espresso',
-    name: 'Эспрессо',
-    desc: 'Классика на зерне нашей обжарки',
-    price: 3.5,
-    volume: '40 мл',
+    id: 'americano',
+    name: 'Американо',
+    desc: 'Эспрессо и горячая вода. Ничего лишнего',
+    price: 4,
+    volume: '300 мл',
     category: 'coffee',
-    color: colors.black,
+    color: drink.espresso,
+  },
+  {
+    id: 'latte-cheese',
+    name: 'Латте айс с сырной пенкой',
+    desc: 'Холодный латте и солёная сырная пенка сверху',
+    price: 7.5,
+    volume: '400 мл',
+    category: 'cold',
+    color: drink.latte,
+    foam: true,
+    cold: true,
+    hit: true,
+    isNew: true,
   },
   {
     id: 'bumble',
@@ -78,26 +97,30 @@ export const menu: MenuItem[] = [
     price: 6.5,
     volume: '400 мл',
     category: 'cold',
-    color: colors.orange,
-    hit: true,
+    color: drink.orange,
+    cold: true,
   },
   {
     id: 'espresso-tonic',
     name: 'Эспрессо-тоник',
-    desc: 'Тоник, лёд и шот эспрессо. Освежает лучше любого кондиционера',
+    desc: 'Тоник, лёд и шот эспрессо',
     price: 6.2,
     volume: '400 мл',
     category: 'cold',
-    color: colors.sky,
+    color: drink.tonic,
+    cold: true,
   },
   {
-    id: 'ice-latte',
-    name: 'Айс латте',
-    desc: 'Холодный латте на любом молоке',
-    price: 5.9,
+    id: 'berry-matcha',
+    name: 'Ягодная матча',
+    desc: 'Матча на молоке и ягодное пюре со льдом',
+    price: 7.4,
     volume: '400 мл',
     category: 'cold',
-    color: colors.milk,
+    color: drink.berry,
+    foam: true,
+    cold: true,
+    hit: true,
   },
   {
     id: 'pomegranate-lemonade',
@@ -106,18 +129,19 @@ export const menu: MenuItem[] = [
     price: 5.5,
     volume: '400 мл',
     category: 'cold',
-    color: colors.pink,
+    color: drink.pomegranate,
+    cold: true,
     isNew: true,
   },
   {
     id: 'matcha',
     name: 'Матча латте',
-    desc: 'Японский зелёный чай с молоком. Можно холодным',
+    desc: 'Японский зелёный чай с молоком',
     price: 6.8,
     volume: '350 мл',
     category: 'tea',
-    color: colors.lime,
-    hit: true,
+    color: drink.matcha,
+    foam: true,
   },
   {
     id: 'thyme-tea',
@@ -126,16 +150,17 @@ export const menu: MenuItem[] = [
     price: 4,
     volume: '400 мл',
     category: 'tea',
-    color: colors.orange,
+    color: drink.tea,
   },
   {
     id: 'cocoa',
-    name: 'Какао с маршмеллоу',
-    desc: 'Густое какао и много маршмеллоу сверху',
+    name: 'Какао',
+    desc: 'Густое какао на молоке',
     price: 5.8,
     volume: '350 мл',
     category: 'tea',
-    color: colors.lilac,
+    color: drink.cocoa,
+    foam: true,
   },
   {
     id: 'croissant',
@@ -143,24 +168,32 @@ export const menu: MenuItem[] = [
     desc: 'Тёплый, хрустящий, с сыром внутри',
     price: 4.5,
     category: 'food',
-    color: colors.milk,
+    color: '#E8C48A',
   },
   {
     id: 'toast',
     name: 'Тост с индейкой',
-    desc: 'Хлеб на закваске, индейка, соус песто',
+    desc: 'Хлеб на закваске, индейка, песто',
     price: 7.5,
     category: 'food',
-    color: colors.lilac,
+    color: '#D9A86C',
   },
   {
     id: 'cheesecake',
     name: 'Чизкейк',
-    desc: 'Нью-йорк, без лишнего',
+    desc: 'Классический нью-йорк',
     price: 6,
     category: 'food',
-    color: colors.pink,
+    color: '#F3E3C3',
   },
 ];
 
-export const formatPrice = (p: number) => `${p.toFixed(2).replace('.00', '')} AZN`;
+export const sizes = [
+  { title: 'S', extra: 0 },
+  { title: 'M', extra: 0.8 },
+  { title: 'L', extra: 1.5 },
+];
+
+export const milks = ['Обычное', 'Овсяное', 'Кокосовое', 'Безлактозное'];
+
+export const formatPrice = (p: number) => `${p.toFixed(2)} ₼`;
