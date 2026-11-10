@@ -1,4 +1,5 @@
-import { View } from 'react-native';
+import { useState } from 'react';
+import { Image, StyleSheet, View } from 'react-native';
 import { MenuItem } from '../data/menu';
 import Cup from './Cup';
 
@@ -7,10 +8,13 @@ type Props = {
   size?: number;
 };
 
+// фото напитка на весь блок; пока грузится или если нет интернета — рисованный стакан
 export default function ProductImage({ item, size = 70 }: Props) {
-  if (item.category === 'food') {
-    // тарелка с едой
-    return (
+  const [loaded, setLoaded] = useState(false);
+  const [failed, setFailed] = useState(false);
+
+  const fallback =
+    item.category === 'food' ? (
       <View
         style={{
           width: size * 1.3,
@@ -31,8 +35,22 @@ export default function ProductImage({ item, size = 70 }: Props) {
           }}
         />
       </View>
+    ) : (
+      <Cup color={item.color} size={size} foam={!!item.foam} straw={item.cold} />
     );
-  }
 
-  return <Cup color={item.color} size={size} foam={!!item.foam} straw={item.cold} />;
+  if (!item.photo || failed) return fallback;
+
+  return (
+    <>
+      {!loaded && fallback}
+      <Image
+        source={{ uri: item.photo }}
+        style={[StyleSheet.absoluteFill, !loaded && { opacity: 0 }]}
+        resizeMode="cover"
+        onLoad={() => setLoaded(true)}
+        onError={() => setFailed(true)}
+      />
+    </>
+  );
 }
